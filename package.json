@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/Raiondesu/monad-playground/issues"
   },
-  "homepage": "https://github.com/Raiondesu/monad-playground#readme"
+  "homepage": "https://github.com/Raiondesu/monad-playground#readme",
+  "dependencies": {
+    "monet": "^0.9.0",
+    "purify-ts": "^0.12.2",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3333"
+  }
 }
