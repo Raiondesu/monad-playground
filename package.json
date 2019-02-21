@@ -1,0 +1,19 @@
+{
+  "name": "monad-playground",
+  "version": "0.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Raiondesu/monad-playground.git"
+  },
+  "author": "Raiondesu <a.raiondesu@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Raiondesu/monad-playground/issues"
+  },
+  "homepage": "https://github.com/Raiondesu/monad-playground#readme"
+}
