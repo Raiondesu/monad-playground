@@ -12,7 +12,9 @@ type FunctionalKeysOf<T extends object> = {
 }[keyof T];
 
 type AspectsOf<R extends object, T extends Exclude<Aspectable, R> = Exclude<Aspectable, R>> = {
-  [key in FunctionalKeysOf<T>]?: T[key] extends (...args: any[]) => any ? (func: T[key]) => (...args: Parameters<T[key]>) => ReturnType<T[key]> : never;
+  [key in FunctionalKeysOf<T>]?: T[key] extends (...args: any[]) => any ? {
+    (func: T[key]): (...args: Parameters<T[key]>) => ReturnType<T[key]>;
+   } : never;
 };
 
 abstract class Aspects {
@@ -23,6 +25,8 @@ abstract class Aspects {
 
   public advice(name: string, handler: Function) {
     this._aspects[name] = handler;
+
+    return this;
   }
 }
 
@@ -45,9 +49,6 @@ const AspectsOf = function AspectsOf<T extends typeof Aspectable>(target: T) {
     const protoSlave: any = target.prototype;
     Object.keys(protoSlave).forEach(key => {
       if (key !== 'constructor' && typeof protoMaster[key] === 'function') {
-        console.log(key, 'of', target.name);
-        console.log('old', protoSlave[key]);
-
         protoSlave[key] = protoMaster[key](protoSlave[key]) || protoSlave[key];
       }
     });
@@ -72,7 +73,7 @@ class Transaction extends Aspectable {
 
 @AspectsOf(Transaction)
 class TransactionLogs extends Aspects implements AspectsOf<Transaction> {
-  public transfer = (target: Transaction['transfer']) => {
+  public transfer(target: Transaction['transfer']) {
     this.advice('mid-transaction', console.log);
     this.advice('no-credentials', () => {
       throw new Error('User has no credentials!');
@@ -94,5 +95,5 @@ class TransactionLogs extends Aspects implements AspectsOf<Transaction> {
 
       return result;
     };
-  };
+  }
 }
