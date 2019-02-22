@@ -11,7 +11,7 @@ type FunctionalKeysOf<T extends object> = {
   [key in keyof T]: T[key] extends Function ? key : never;
 }[keyof T];
 
-type AspectOf<R extends object, T extends Exclude<Aspectable, R> = Exclude<Aspectable, R>> = {
+type AspectsOf<R extends object, T extends Exclude<Aspectable, R> = Exclude<Aspectable, R>> = {
   [key in FunctionalKeysOf<T>]?: T[key] extends (...args: any[]) => any ? (func: T[key]) => (...args: Parameters<T[key]>) => ReturnType<T[key]> : never;
 };
 
@@ -39,6 +39,8 @@ abstract class Aspectable {
 
 const AspectsOf = function AspectsOf<T extends typeof Aspectable>(target: T) {
   return (aspects: any) => {
+    aspects._aspects = { ...aspects._aspects, ...(target as any)._aspects};
+
     const protoMaster: any = new aspects();
     const protoSlave: any = target.prototype;
     Object.keys(protoSlave).forEach(key => {
@@ -69,10 +71,12 @@ class Transaction extends Aspectable {
 }
 
 @AspectsOf(Transaction)
-class TransactionLogs extends Aspects implements AspectOf<Transaction> {
+class TransactionLogs extends Aspects implements AspectsOf<Transaction> {
   public transfer = (target: Transaction['transfer']) => {
     this.advice('mid-transaction', console.log);
-    this.advice('no-credentials', () => console.error('User has no credentials!'));
+    this.advice('no-credentials', () => {
+      throw new Error('User has no credentials!');
+    });
 
     return function transfer(this: Transaction, from: string, to: string, amount: number, userCredentials: string) {
       console.log('transaction of', amount,'started from', from, 'and', to);
