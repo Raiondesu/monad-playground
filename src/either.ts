@@ -48,7 +48,7 @@ export class Either<E, R> {
   }
 
   public get raw() {
-    return either(this.right, this.left);
+    return either(this.left, this.right);
   }
 
   public static left<T>(v: T) {
